@@ -1,0 +1,3 @@
+package com.example.corporate.config;
+import com.example.corporate.entity.*; import com.example.corporate.repository.UserRepository; import org.springframework.boot.CommandLineRunner; import org.springframework.context.annotation.Bean; import org.springframework.context.annotation.Configuration; import org.springframework.security.crypto.password.PasswordEncoder; import java.util.Set;
+@Configuration public class DataInitializer { @Bean CommandLineRunner init(UserRepository repo,PasswordEncoder enc){return args->{if(!repo.existsByUsername("admin")){AppUser u=new AppUser();u.setUsername("admin");u.setPassword(enc.encode("admin123"));u.setFullName("System Administrator");u.setRoles(Set.of(Role.ADMIN));repo.save(u);}};} }

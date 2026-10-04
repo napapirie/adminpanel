@@ -1,0 +1,3 @@
+package com.example.corporate.pattern;
+import com.example.corporate.dto.UserRequest; import com.example.corporate.entity.*; import org.springframework.security.crypto.password.PasswordEncoder; import org.springframework.stereotype.Component; import java.util.Set;
+@Component public class UserFactory { private final PasswordEncoder encoder; public UserFactory(PasswordEncoder e){encoder=e;} public AppUser create(UserRequest r){ AppUser u=new AppUser(); u.setUsername(r.username()); u.setPassword(encoder.encode(r.password())); u.setFullName(r.fullName()); u.setRoles(r.roles()==null?Set.of(Role.USER):r.roles()); u.setEnabled(r.enabled()==null||r.enabled()); return u; } }

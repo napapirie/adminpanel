@@ -1,0 +1,7 @@
+package com.example.corporate.config;
+import com.example.corporate.repository.UserRepository; import org.springframework.context.annotation.*; import org.springframework.security.core.userdetails.*; import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; import org.springframework.security.crypto.password.PasswordEncoder; import org.springframework.security.web.SecurityFilterChain; import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+@Configuration public class SecurityConfig {
+ @Bean PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
+ @Bean UserDetailsService userDetailsService(UserRepository repo){return name->{var u=repo.findByUsername(name).orElseThrow(()->new UsernameNotFoundException(name)); return User.withUsername(u.getUsername()).password(u.getPassword()).disabled(!u.isEnabled()).roles(u.getRoles().stream().map(Enum::name).toArray(String[]::new)).build();};}
+ @Bean SecurityFilterChain filterChain(HttpSecurity http)throws Exception{http.authorizeHttpRequests(a->a.requestMatchers("/h2-console/**","/services/**").permitAll().requestMatchers("/admin/**","/api/admin/**").hasRole("ADMIN").requestMatchers("/api/manager/**").hasAnyRole("ADMIN","MANAGER").anyRequest().authenticated()).formLogin(f->f.defaultSuccessUrl("/admin",true)).logout(l->l.logoutSuccessUrl("/login?logout")).csrf(c->c.ignoringRequestMatchers("/api/**","/services/**","/h2-console/**")).headers(h->h.frameOptions(f->f.sameOrigin())); return http.build();}
+}
